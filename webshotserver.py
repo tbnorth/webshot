@@ -20,14 +20,17 @@ class ShotHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         SimpleHTTPServer.SimpleHTTPRequestHandler.end_headers(self)
 
     def do_GET(self):
+        print self.path
         if self.path == "/favicon.ico":
             self.send_response(404)
             return
-        print self.path
         self.server.img_count += 1
-        do_shot("Cesium[ ]Glider",  "anim%05d.bmp" % self.server.img_count, 104, 5, 5, 5)
+        do_shot("Cesium[ ]Glider",  "anim%05d.bmp" % self.server.img_count, 160, 200, 70, 280)
         self.send_response(200)
-        self.send_head()
+        # self.send_head()
+        self.end_headers()
+        self.wfile.write("OK")
+        # self.wfile.close()
 
 server_address = ('', PORT)
 httpd = BaseHTTPServer.HTTPServer(server_address, ShotHandler)
