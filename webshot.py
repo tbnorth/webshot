@@ -6,6 +6,7 @@ http://stackoverflow.com/q/3586046/1072212
 Terry N Brown, terrynbrown@gmail.com, Fri Nov 18 13:31:59 2016
 """
 
+import os
 import re
 import sys
 import win32con
@@ -13,7 +14,21 @@ import win32gui
 import win32ui
 
 
+def numbered_file(fname):
+    if not re.search('%.*d', fname):
+        return fname
+    for i in range(1, 10000):
+        if os.path.exists(fname % i):
+            continue
+        break
+    else:
+        raise Exception("%d plus images, limit reached" % i)
+    return fname % i
+
+
 def do_shot(window_pattern, bmpfilenamename, top, left, bottom, right):
+
+    bmpfilenamename = numbered_file(bmpfilenamename)
 
     window_re = re.compile(window_pattern)
 
@@ -41,8 +56,8 @@ def do_shot(window_pattern, bmpfilenamename, top, left, bottom, right):
     h = rect[3] - y - top - bottom
 
     wDC = win32gui.GetWindowDC(hwnd)
-    dcObj=win32ui.CreateDCFromHandle(wDC)
-    cDC=dcObj.CreateCompatibleDC()
+    dcObj = win32ui.CreateDCFromHandle(wDC)
+    cDC = dcObj.CreateCompatibleDC()
     dataBitMap = win32ui.CreateBitmap()
     dataBitMap.CreateCompatibleBitmap(dcObj, w, h)
     cDC.SelectObject(dataBitMap)
@@ -60,6 +75,7 @@ def main():
     window_pattern, bmpfilenamename = sys.argv[1:3]
     top, left, bottom, right = map(int, sys.argv[3:7])
     do_shot(window_pattern, bmpfilenamename, top, left, bottom, right)
+
 
 if __name__ == '__main__':
     main()
