@@ -15,6 +15,7 @@ import win32ui
 
 
 def numbered_file(fname):
+    """Process '%04d' etc. in fname to next non-existent file"""
     if not re.search('%.*d', fname):
         return fname
     for i in range(1, 10000):
